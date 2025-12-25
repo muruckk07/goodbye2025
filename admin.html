@@ -1,412 +1,162 @@
 <!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>관리자 - GoodBye 2025</title>
-    <style>
-      :root {
-        --bg: #07080c;
-        --card: rgba(255,255,255,.06);
-        --line: rgba(255,255,255,.12);
-        --txt: rgba(255,255,255,.92);
-        --muted: rgba(255,255,255,.68);
-        --btn: #ffffff;
-        --btnTxt: #0b0c10;
-        --danger: #ffb4b4;
-      }
-      * { box-sizing: border-box; }
-      html, body { margin: 0; padding: 0; }
-      body {
-        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Apple SD Gothic Neo", "Noto Sans KR", Arial;
-        color: var(--txt);
-        background:
-          radial-gradient(1000px 520px at 15% -10%, rgba(255,255,255,.14), transparent 55%),
-          radial-gradient(900px 520px at 110% 10%, rgba(120,160,255,.18), transparent 55%),
-          radial-gradient(800px 420px at 60% 110%, rgba(255,140,200,.10), transparent 55%),
-          var(--bg);
-        overflow-x: hidden;
-      }
-
-      .safe { padding: 18px 16px 28px; }
-      .container { max-width: 600px; margin: 0 auto; }
-
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24px;
-      }
-      .header h1 {
-        font-size: 28px;
-        font-weight: 950;
-        margin: 0;
-      }
-      .header-actions {
-        display: flex;
-        gap: 8px;
-      }
-
-      .stats {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        margin-bottom: 24px;
-      }
-      .stat-card {
-        border: 1px solid var(--line);
-        background: var(--card);
-        border-radius: 18px;
-        padding: 16px;
-        backdrop-filter: blur(10px);
-      }
-      .stat-label {
-        font-size: 13px;
-        color: var(--muted);
-        margin-bottom: 6px;
-      }
-      .stat-value {
-        font-size: 32px;
-        font-weight: 950;
-      }
-
-      .btn {
-        display: inline-block;
-        padding: 10px 14px;
-        border-radius: 10px;
-        background: var(--btn);
-        color: var(--btnTxt);
-        font-weight: 950;
-        border: none;
-        cursor: pointer;
-        font-size: 13px;
-        transition: transform .12s ease;
-      }
-      .btn:active { transform: scale(.98); }
-      .btn.secondary {
-        background: rgba(255,255,255,.08);
-        color: var(--txt);
-      }
-
-      .list-container {
-        border: 1px solid var(--line);
-        background: var(--card);
-        border-radius: 18px;
-        backdrop-filter: blur(10px);
-        overflow: hidden;
-      }
-      .list-header {
-        padding: 14px;
-        border-bottom: 1px solid var(--line);
-        font-weight: 950;
-        font-size: 14px;
-      }
-      .list-item {
-        padding: 14px;
-        border-bottom: 1px solid rgba(255,255,255,.06);
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 12px;
-      }
-      .list-item:last-child {
-        border-bottom: none;
-      }
-      .item-info {
-        flex: 1;
-      }
-      .item-name {
-        font-weight: 850;
-        margin-bottom: 4px;
-      }
-      .item-message {
-        font-size: 13px;
-        color: var(--muted);
-        line-height: 1.4;
-        margin-bottom: 4px;
-      }
-      .item-time {
-        font-size: 12px;
-        color: rgba(255,255,255,.5);
-      }
-      .item-delete {
-        background: rgba(255,180,180,.12);
-        color: var(--danger);
-        border: none;
-        padding: 6px 10px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 12px;
-        font-weight: 900;
-        transition: background .12s ease;
-      }
-      .item-delete:hover {
-        background: rgba(255,180,180,.2);
-      }
-
-      .empty-state {
-        padding: 40px 20px;
-        text-align: center;
-        color: var(--muted);
-      }
-      .empty-state-icon {
-        font-size: 48px;
-        margin-bottom: 12px;
-      }
-
-      .modal-backdrop {
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,.55);
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity .22s ease;
-        z-index: 40;
-      }
-      .modal-backdrop.open {
-        opacity: 1;
-        pointer-events: auto;
-      }
-
-      .modal {
-        position: fixed;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%) scale(.95);
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity .22s ease, transform .22s ease;
-        z-index: 45;
-      }
-      .modal.open {
-        opacity: 1;
-        pointer-events: auto;
-        transform: translate(-50%, -50%) scale(1);
-      }
-      .modal-content {
-        background: rgba(15,16,22,.92);
-        border: 1px solid rgba(255,255,255,.14);
-        border-radius: 18px;
-        padding: 20px;
-        max-width: 400px;
-        backdrop-filter: blur(12px);
-      }
-      .modal-title {
-        font-weight: 950;
-        font-size: 18px;
-        margin-bottom: 12px;
-      }
-      .modal-text {
-        color: var(--muted);
-        margin-bottom: 20px;
-        line-height: 1.5;
-      }
-      .modal-actions {
-        display: flex;
-        gap: 8px;
-      }
-      .modal-actions .btn {
-        flex: 1;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="safe">
-      <div class="container">
-
-        <!-- Header -->
-        <div class="header">
-          <h1>신청 현황</h1>
-          <div class="header-actions">
-            <button class="btn secondary" id="exportBtn">CSV 다운로드</button>
-            <button class="btn secondary" id="clearBtn">전체 삭제</button>
-          </div>
-        </div>
-
-        <!-- Stats -->
-        <div class="stats">
-          <div class="stat-card">
-            <div class="stat-label">총 신청자</div>
-            <div class="stat-value" id="totalCount">0</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">마지막 신청</div>
-            <div class="stat-value" id="lastTime" style="font-size: 14px;">-</div>
-          </div>
-        </div>
-
-        <!-- List -->
-        <div class="list-container">
-          <div class="list-header">신청자 목록</div>
-          <div id="listContent"></div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Confirm Modal -->
-    <div class="modal-backdrop" id="modalBackdrop"></div>
-    <div class="modal" id="modal">
-      <div class="modal-content">
-        <div class="modal-title" id="modalTitle">확인</div>
-        <div class="modal-text" id="modalText"></div>
-        <div class="modal-actions">
-          <button class="btn secondary" id="modalCancel">취소</button>
-          <button class="btn" id="modalConfirm">삭제</button>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>관리자 - GoodBye 2025</title>
+  <style>
+    :root{
+      --bg:#07080c; --card:rgba(255,255,255,.06); --line:rgba(255,255,255,.12);
+      --txt:rgba(255,255,255,.92); --muted:rgba(255,255,255,.68);
+      --btn:#ffffff; --btnTxt:#0b0c10;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Apple SD Gothic Neo","Noto Sans KR", Arial;
+      color:var(--txt);
+      background:
+        radial-gradient(1000px 520px at 15% -10%, rgba(255,255,255,.14), transparent 55%),
+        radial-gradient(900px 520px at 110% 10%, rgba(120,160,255,.18), transparent 55%),
+        radial-gradient(800px 420px at 60% 110%, rgba(255,140,200,.10), transparent 55%),
+        var(--bg);
+    }
+    .safe{padding:18px 16px 28px;}
+    .container{max-width:680px;margin:0 auto;}
+    .header{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px;}
+    .header h1{margin:0;font-size:22px;font-weight:950;}
+    .btn{
+      padding:10px 12px;border-radius:10px;border:none;cursor:pointer;
+      font-weight:950;background:var(--btn);color:var(--btnTxt);font-size:13px;
+    }
+    .btn.secondary{background:rgba(255,255,255,.08);color:var(--txt);border:1px solid var(--line);}
+    .card{border:1px solid var(--line);background:var(--card);border-radius:18px;padding:14px;backdrop-filter:blur(10px);}
+    .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+    .statLabel{font-size:12px;color:var(--muted);margin-bottom:6px;}
+    .statValue{font-size:22px;font-weight:950;}
+    .listHeader{font-weight:950;margin-bottom:10px;}
+    .item{padding:12px 0;border-top:1px solid rgba(255,255,255,.06);}
+    .name{font-weight:900;margin-bottom:4px;}
+    .msg{color:var(--muted);font-size:13px;line-height:1.4;margin-bottom:4px;}
+    .time{color:rgba(255,255,255,.55);font-size:12px;}
+    .empty{color:var(--muted);text-align:center;padding:28px 0;}
+  </style>
+</head>
+<body>
+  <div class="safe">
+    <div class="container">
+      <div class="header">
+        <h1>신청 현황</h1>
+        <div style="display:flex; gap:8px;">
+          <button class="btn secondary" id="refreshBtn">새로고침</button>
+          <button class="btn secondary" id="csvBtn">CSV 다운로드</button>
         </div>
       </div>
+
+      <div class="stats">
+        <div class="card">
+          <div class="statLabel">총 신청자</div>
+          <div class="statValue" id="totalCount">0</div>
+        </div>
+        <div class="card">
+          <div class="statLabel">마지막 신청</div>
+          <div class="statValue" id="lastTime" style="font-size:14px;">-</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="listHeader">신청자 목록</div>
+        <div id="list"></div>
+      </div>
     </div>
+  </div>
 
-    <script>
-      const listContent = document.getElementById("listContent");
-      const totalCount = document.getElementById("totalCount");
-      const lastTime = document.getElementById("lastTime");
-      const exportBtn = document.getElementById("exportBtn");
-      const clearBtn = document.getElementById("clearBtn");
-      const modalBackdrop = document.getElementById("modalBackdrop");
-      const modal = document.getElementById("modal");
-      const modalTitle = document.getElementById("modalTitle");
-      const modalText = document.getElementById("modalText");
-      const modalCancel = document.getElementById("modalCancel");
-      const modalConfirm = document.getElementById("modalConfirm");
+  <script>
+    // ✅ 여기에 너의 Apps Script 웹앱 URL 붙여넣기
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwzB1-eRtO785yjNCYW-66iZzIrFxob6xDtwhtE89Z9Gb94WrO566R3NxCjfkLwtSya/exec";
 
-      let pendingAction = null;
+    const listEl = document.getElementById("list");
+    const totalCountEl = document.getElementById("totalCount");
+    const lastTimeEl = document.getElementById("lastTime");
+    const refreshBtn = document.getElementById("refreshBtn");
+    const csvBtn = document.getElementById("csvBtn");
 
-      function loadRsvpList() {
-        const rsvpList = JSON.parse(localStorage.getItem("rsvpList")) || [];
-        renderList(rsvpList);
-        updateStats(rsvpList);
+    let latestRows = [];
+
+    // JSONP 콜백 (CORS 회피)
+    function renderRsvp(data){
+      if(!data || !data.ok){
+        listEl.innerHTML = '<div class="empty">불러오기에 실패했어요.</div>';
+        return;
+      }
+      latestRows = data.rows || [];
+      totalCountEl.textContent = latestRows.length;
+
+      if(latestRows.length > 0){
+        lastTimeEl.textContent = latestRows[0].timestamp || "-";
+      } else {
+        lastTimeEl.textContent = "-";
       }
 
-      function renderList(rsvpList) {
-        if (rsvpList.length === 0) {
-          listContent.innerHTML = `
-            <div class="empty-state">
-              <div class="empty-state-icon">📭</div>
-              <div>아직 신청자가 없습니다.</div>
-            </div>
-          `;
-          return;
-        }
-
-        // 최신순 정렬
-        const sorted = [...rsvpList].sort((a, b) => b.id - a.id);
-
-        listContent.innerHTML = sorted.map(item => `
-          <div class="list-item">
-            <div class="item-info">
-              <div class="item-name">${escapeHtml(item.name)}</div>
-              <div class="item-message">"${escapeHtml(item.message)}"</div>
-              <div class="item-time">${item.timestamp}</div>
-            </div>
-            <button class="item-delete" data-id="${item.id}">삭제</button>
-          </div>
-        `).join("");
-
-        // 삭제 버튼 이벤트
-        document.querySelectorAll(".item-delete").forEach(btn => {
-          btn.addEventListener("click", (e) => {
-            const id = parseInt(e.target.dataset.id);
-            const item = rsvpList.find(x => x.id === id);
-            openConfirmModal(
-              `${escapeHtml(item.name)} 삭제`,
-              `"${escapeHtml(item.name)}"의 신청을 삭제하시겠습니까?`,
-              () => deleteItem(id)
-            );
-          });
-        });
+      if(latestRows.length === 0){
+        listEl.innerHTML = '<div class="empty">아직 신청자가 없습니다.</div>';
+        return;
       }
 
-      function updateStats(rsvpList) {
-        totalCount.textContent = rsvpList.length;
-        if (rsvpList.length > 0) {
-          const latest = rsvpList.reduce((a, b) => a.id > b.id ? a : b);
-          lastTime.textContent = latest.timestamp;
-        } else {
-          lastTime.textContent = "-";
-        }
+      listEl.innerHTML = latestRows.map(r => `
+        <div class="item">
+          <div class="name">${escapeHtml(r.name)}</div>
+          <div class="msg">"${escapeHtml(r.message)}"</div>
+          <div class="time">${escapeHtml(r.timestamp)}</div>
+        </div>
+      `).join("");
+    }
+
+    function escapeHtml(text){
+      const div = document.createElement("div");
+      div.textContent = text ?? "";
+      return div.innerHTML;
+    }
+
+    function loadList(){
+      // 기존 script 태그 제거 (중복 방지)
+      const old = document.getElementById("jsonp");
+      if(old) old.remove();
+
+      const s = document.createElement("script");
+      s.id = "jsonp";
+      const cb = "renderRsvp";
+      s.src = `${WEB_APP_URL}?action=list&callback=${cb}&_ts=${Date.now()}`;
+      document.body.appendChild(s);
+    }
+
+    function downloadCSV(){
+      if(!latestRows || latestRows.length === 0){
+        alert("내보낼 데이터가 없습니다.");
+        return;
       }
+      const headers = ["timestamp","name","message"];
+      const lines = [headers.join(",")];
 
-      function deleteItem(id) {
-        let rsvpList = JSON.parse(localStorage.getItem("rsvpList")) || [];
-        rsvpList = rsvpList.filter(item => item.id !== id);
-        localStorage.setItem("rsvpList", JSON.stringify(rsvpList));
-        loadRsvpList();
-        closeModal();
-      }
-
-      function exportCSV() {
-        const rsvpList = JSON.parse(localStorage.getItem("rsvpList")) || [];
-        if (rsvpList.length === 0) {
-          alert("내보낼 데이터가 없습니다.");
-          return;
-        }
-
-        // CSV 헤더
-        const headers = ["이름", "한 마디", "신청 시간"];
-        const rows = rsvpList.map(item => [
-          item.name,
-          item.message,
-          item.timestamp
-        ]);
-
-        // CSV 문자열 생성
-        let csv = headers.join(",") + "
-";
-        rows.forEach(row => {
-          csv += row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(",") + "\n";
-        });
-
-        // 다운로드
-        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-        const link = document.createElement("a");
-        const url = URL.createObjectURL(blob);
-        link.setAttribute("href", url);
-        link.setAttribute("download", `goodbye2025_rsvp_${new Date().toISOString().split('T')[0]}.csv`);
-        link.click();
-      }
-
-      function openConfirmModal(title, text, onConfirm) {
-        modalTitle.textContent = title;
-        modalText.textContent = text;
-        pendingAction = onConfirm;
-        modalBackdrop.classList.add("open");
-        modal.classList.add("open");
-      }
-
-      function closeModal() {
-        modalBackdrop.classList.remove("open");
-        modal.classList.remove("open");
-        pendingAction = null;
-      }
-
-      function escapeHtml(text) {
-        const div = document.createElement("div");
-        div.textContent = text;
-        return div.innerHTML;
-      }
-
-      // 이벤트 리스너
-      exportBtn.addEventListener("click", exportCSV);
-      clearBtn.addEventListener("click", () => {
-        openConfirmModal(
-          "전체 삭제",
-          "모든 신청 데이터를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
-          () => {
-            localStorage.removeItem("rsvpList");
-            loadRsvpList();
-            closeModal();
-          }
-        );
+      latestRows.slice().reverse().forEach(r => {
+        const row = [r.timestamp, r.name, r.message].map(v => `"${String(v ?? "").replace(/"/g,'""')}"`);
+        lines.push(row.join(","));
       });
-      modalCancel.addEventListener("click", closeModal);
-      modalConfirm.addEventListener("click", () => {
-        if (pendingAction) pendingAction();
-      });
-      modalBackdrop.addEventListener("click", closeModal);
 
-      // 초기 로드
-      loadRsvpList();
-    </script>
-  </body>
+      const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `goodbye2025_rsvp_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    refreshBtn.addEventListener("click", loadList);
+    csvBtn.addEventListener("click", downloadCSV);
+
+    // 최초 로드
+    loadList();
+  </script>
+</body>
 </html>
