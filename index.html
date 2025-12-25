@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoodBye 2025 - Invitation</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div class="safe">
+      <div class="container">
+
+        <!-- HERO -->
+        <section class="hero">
+          <div class="poster" aria-hidden="true"></div>
+          <div class="heroGlow" aria-hidden="true"></div>
+
+          <div class="heroInner">
+            <div class="eyebrow">invitation</div>
+            <div class="title">GoodBye<br/>2025</div>
+
+            <!-- 참여자 pills -->
+            <div class="meta">
+              <div class="pill">Lena</div>
+              <div class="pill">Rudy</div>
+              <div class="pill">Dia</div>
+              <div class="pill">Somi</div>
+              <div class="pill">Mai</div>
+              <div class="pill">Sick</div>
+            </div>
+
+            <div class="sub">
+              한 해의 끝에서, 가볍게 모여요.
+            </div>
+          </div>
+        </section>
+
+        <!-- DETAILS -->
+        <section class="card reveal">
+          <div class="sectionTitle">Details</div>
+
+          <div class="row">
+            <div class="label">date</div>
+            <div class="value">2025.12.30 (화) 18:00</div>
+          </div>
+
+          <div class="row">
+            <div class="label">place</div>
+            <div class="value" style="display:flex; flex-wrap:wrap; gap:8px;">
+              <span class="pill">말리화(1차)</span>
+              <span class="pill">베이비블루(2차)</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- DRESS CODE -->
+        <section class="card reveal">
+          <div class="sectionTitle">Dress code</div>
+          <div class="noticeText">
+            <span class="tag red">red</span>
+            <span class="tag green">green</span>
+          </div>
+        </section>
+
+        <!-- 신청 CTA -->
+        <section class="card reveal">
+          <button class="btn" id="openRsvpTop">신청하기</button>
+          <div class="mini" style="margin-top:10px;">* 최종 참여자 확인합니다!</div>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- RSVP Bottom Sheet -->
+    <div class="sheetBackdrop" id="backdrop" aria-hidden="true"></div>
+    <div class="sheet" id="sheet" aria-hidden="true">
+      <div class="sheetPanel">
+        <div class="sheetTop">
+          <div class="sheetTitle">신청하기</div>
+          <button class="close" id="closeBtn">닫기</button>
+        </div>
+
+        <div class="field">
+          <div class="fieldLabel">이름 *</div>
+          <input id="name" placeholder="홍길동" />
+        </div>
+
+        <div class="field">
+          <div class="fieldLabel">한 마디 *</div>
+          <input id="message" placeholder="예: 늦참해요 / 기대돼요 / 올해 고생했어요!" />
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <button class="btn" id="submitBtn" style="margin-top:12px;">제출</button>
+        <div class="mini" style="margin-top:10px;">* 최종 참여자 확인합니다!</div>
+      </div>
+    </div>
+
+    <div class="successToast" id="toast">신청 완료 ✨</div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
